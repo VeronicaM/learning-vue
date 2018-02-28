@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Laracast Vue tutorial</title>
+    <style>
+        .is-loading {
+            background-color: red;
+        }
+    </style>
+</head>
+<div id="root">
+    <input type="text" name="message" v-model="message" />
+    <p> The value of message is {{message}}</p>
+    <ul>
+        <li v-for="name in names" v-text="name"></li>
+        <!-- or <li v-for="name in names"> {{name}} </li>-->
+    </ul>
+    <input type="text" v-model="newName" />
+    <button :disabled="doAdds? false: true" id=" button" @click="disabledAdds(); addName();" :title="title" :class="{
+        'is-loading':isLoading } ">
+        Add Name</button>
+    <p>{{reversedMessage}}</p>
+    <p> All Tasks</p>
+    <div>
+        <div v-for="t in tasks">
+            <task :name="t.text" :value="t.id" :completed="t.completed">{{t.text}}</task>
+        </div>
+    </div>
+
+    <div v-for="t in tasks">
+        <task :name="t.text" :value="t.id" :completed="t.completed">{{t.text}}</task>
+    </div>
+
+    
+    <p> Incomplete Tasks</p>
+    <ul>
+        <li v-for="task in incompleteTasks" v-text="task.text"></li>
+    </ul>
+</div>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js "></script>
+    <script src="main.js"></script>
+    <script>
+        new Vue({
+            el: "#root ",
+            data: {
+                title: 'This adds a new name into the array list',
+                newName: '',
+                message: "Hello world! ",
+                names: ["jenny ", "Ben ", "Eli ", "Bob "],
+                isLoading: true,
+                doAdds: true,
+                components: {
+                    task: "task"
+                },
+                tasks: [{
+                        id: 1,
+                        text: "Go to the store",
+                        completed: true
+                    },
+                    {
+                        id: 2,
+                        text: "Learn Vue",
+                        completed: false
+                    },
+                    {
+                        id: 3,
+                        text: "Refactor sweet alerts",
+                        completed: false
+                    },
+                    {
+                        id: 4,
+                        text: "Watch a movie",
+                        completed: false
+                    },
+                    {
+                        id: 5,
+                        text: "Fix datepicker bug on IE",
+                        completed: false
+                    },
+                    {
+                        id: 6,
+                        text: "Eat",
+                        completed: true
+                    },
+                    {
+                        id: 7,
+                        text: "Rest",
+                        completed: false
+                    },
+                ]
+            },
+            created: function () {
+                //or add v-on:selected directly on the task item
+                this.$on('selected', function (value) {
+                    console.log("clicked task", value);
+                    this.completeTask(value);
+                });
+            },
+            methods: {
+                addName() {
+                    if (this.newName) {
+                        this.names.push(this.newName);
+                        this.newName = "";
+                    }
+                },
+                disabledAdds() {
+                    this.doAdds = false;
+                },
+                completeTask(taskId) {
+                    this.tasks = this.tasks.map(task => {
+                        if (task.id == taskId) {
+                            return { ...task,
+                                completed: !task.completed
+                            };
+                        }
+                        return task;
+                    });
+                },
+            },
+            computed: {
+                reversedMessage() {
+                    return this.message.split("").reverse().join('');
+                },
+                incompleteTasks() {
+                    return this.tasks.filter(task => !task.completed);
+                }
+            },
+            mounted() {
+
+            }
+        });
+    </script>
+
+</body>
+
+</html>
